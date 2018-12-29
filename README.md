@@ -100,15 +100,31 @@ Pytorch implementation of conditional Generative Adversarial Networks (cGAN) [1]
 
 ## Development Environment
 
-* Ubuntu 14.04 LTS
+* Ubuntu 16.04 LTS
 * NVIDIA GTX 1080 ti
-* cuda 8.0
-* Python 2.7.6
-* pytorch 0.1.12
-* torchvision 0.1.8
-* matplotlib 1.3.1
-* imageio 2.2.0
-
+* cuda 9.0
+* Python 3.6.2
+* certifi (2016.2.28)
+* cffi (1.10.0)
+* cycler (0.10.0)
+* imageio (2.4.1)
+* kiwisolver (1.0.1)
+* matplotlib (3.0.2)
+* mkl-fft (1.0.6)
+* mkl-random (1.0.1)
+* numpy (1.15.4)
+* olefile (0.44)
+* Pillow (4.2.1)
+* pip (9.0.1)
+* pycparser (2.18)
+* pyparsing (2.3.0)
+* python-dateutil (2.7.5)
+* setuptools (36.4.0)
+* six (1.10.0)
+* torch (1.0.0)
+* torchvision (0.2.1)
+* wheel (0.29.0)
+* wincertstore (0.2)
 ## Reference
 
 [1] Mirza, Mehdi, and Simon Osindero. "Conditional generative adversarial nets." arXiv preprint arXiv:1411.1784 (2014).
