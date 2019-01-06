@@ -114,6 +114,7 @@ Pytorch implementation of conditional Generative Adversarial Networks (cGAN) [1]
 * mkl-random (1.0.1)
 * numpy (1.15.4)
 * olefile (0.44)
+* opencv-python (3.4.5.20)
 * Pillow (4.2.1)
 * pip (9.0.1)
 * pycparser (2.18)
