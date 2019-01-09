@@ -98,6 +98,13 @@ Pytorch implementation of conditional Generative Adversarial Networks (cGAN) [1]
 * Learning Time
   * CelebA cDCGAN - Avg. per epoch: 826.69 sec; total 20 epochs ptime: 16564.10 sec
 
+##图像纠偏
+最常见的文本纠偏算法有两种，分别是
+
+1.基于FFT变换以后频率域梯度
+2.基于离散点求最小外接轮廓
+这两种方法各有千秋，相对来说，第二种方法得到的结果更加准确，第一种基于离散傅立叶变换求振幅的方法有时候各种阈值选择在实际项目中会有很大问题。
+
 ## Development Environment
 
 * Ubuntu 16.04 LTS
