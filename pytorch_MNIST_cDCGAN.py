@@ -9,6 +9,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
+from mydataset import MyDataset
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 # G(z)
 class generator(nn.Module):
@@ -146,13 +148,14 @@ def show_train_hist(hist, show = False, save = False, path = 'Train_hist.png'):
         plt.close()
 
 # training parameters
-batch_size = 128
+batch_size = 256
 lr = 0.0002
-train_epoch = 20
+train_epoch = 40000
 
 # data_loader
 img_size = 32
 transform = transforms.Compose([
+        transforms.RandomRotation(35),
         transforms.Scale(img_size),
         transforms.ToTensor(),
         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
@@ -161,6 +164,9 @@ train_loader = torch.utils.data.DataLoader(
     datasets.MNIST('data', train=True, download=True, transform=transform),
     batch_size=batch_size, shuffle=True)
 
+# train_loader = torch.utils.data.DataLoader(
+#     MyDataset('./HWDB1/test1.txt', transform=transform),
+#     batch_size=batch_size, shuffle=True)
 # network
 G = generator(128)
 D = discriminator(128)
@@ -208,9 +214,6 @@ for epoch in range(train_epoch):
     if (epoch+1) == 11:
         G_optimizer.param_groups[0]['lr'] /= 10
         D_optimizer.param_groups[0]['lr'] /= 10
-        print("learning rate change!")
-
-    if (epoch+1) == 16:
         G_optimizer.param_groups[0]['lr'] /= 10
         D_optimizer.param_groups[0]['lr'] /= 10
         print("learning rate change!")
@@ -265,7 +268,8 @@ for epoch in range(train_epoch):
         D_train_loss.backward()
         D_optimizer.step()
 
-        D_losses.append(D_train_loss.data[0])
+        # D_losses.append(D_train_loss.data[0])
+        D_losses.append(D_train_loss.item())
 
         # train generator G
         G.zero_grad()
@@ -288,7 +292,8 @@ for epoch in range(train_epoch):
         G_train_loss.backward()
         G_optimizer.step()
 
-        G_losses.append(G_train_loss.data[0])
+        # G_losses.append(G_train_loss.data[0])
+        G_losses.append(G_train_loss.item())
 
     epoch_end_time = time.time()
     per_epoch_ptime = epoch_end_time - epoch_start_time
