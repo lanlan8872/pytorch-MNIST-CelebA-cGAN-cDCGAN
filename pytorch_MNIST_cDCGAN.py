@@ -89,7 +89,11 @@ fixed_z_ = fixed_z_.view(-1, 100, 1, 1)
 fixed_y_label_ = torch.zeros(100, 10)
 fixed_y_label_.scatter_(1, fixed_y_.type(torch.LongTensor), 1)
 fixed_y_label_ = fixed_y_label_.view(-1, 10, 1, 1)
-fixed_z_, fixed_y_label_ = Variable(fixed_z_.cuda(), volatile=True), Variable(fixed_y_label_.cuda(), volatile=True)
+with torch.no_grad():
+    if torch.cuda.is_available():
+        fixed_z_, fixed_y_label_ = Variable(fixed_z_.cuda(), volatile=True), Variable(fixed_y_label_.cuda(), volatile=True)
+    else:
+        fixed_z_, fixed_y_label_ = Variable(fixed_z_, volatile=True), Variable(fixed_y_label_, volatile=True)
 def show_result(num_epoch, show = False, save = False, path = 'result.png'):
 
     G.eval()
@@ -162,8 +166,9 @@ G = generator(128)
 D = discriminator(128)
 G.weight_init(mean=0.0, std=0.02)
 D.weight_init(mean=0.0, std=0.02)
-G.cuda()
-D.cuda()
+if torch.cuda.is_available():
+    G.cuda()
+    D.cuda()
 
 # Binary Cross Entropy loss
 BCE_loss = nn.BCELoss()
@@ -213,7 +218,10 @@ for epoch in range(train_epoch):
     epoch_start_time = time.time()
     y_real_ = torch.ones(batch_size)
     y_fake_ = torch.zeros(batch_size)
-    y_real_, y_fake_ = Variable(y_real_.cuda()), Variable(y_fake_.cuda())
+    if torch.cuda.is_available():
+        y_real_, y_fake_ = Variable(y_real_.cuda()), Variable(y_fake_.cuda())
+    else:
+        y_real_, y_fake_ = Variable(y_real_), Variable(y_fake_)
     for x_, y_ in train_loader:
         # train discriminator D
         D.zero_grad()
@@ -223,10 +231,16 @@ for epoch in range(train_epoch):
         if mini_batch != batch_size:
             y_real_ = torch.ones(mini_batch)
             y_fake_ = torch.zeros(mini_batch)
-            y_real_, y_fake_ = Variable(y_real_.cuda()), Variable(y_fake_.cuda())
+            if torch.cuda.is_available():
+                y_real_, y_fake_ = Variable(y_real_.cuda()), Variable(y_fake_.cuda())
+            else:
+                y_real_, y_fake_ = Variable(y_real_), Variable(y_fake_)
 
         y_fill_ = fill[y_]
-        x_, y_fill_ = Variable(x_.cuda()), Variable(y_fill_.cuda())
+        if torch.cuda.is_available():
+            x_, y_fill_ = Variable(x_.cuda()), Variable(y_fill_.cuda())
+        else:
+            x_, y_fill_ = Variable(x_), Variable(y_fill_)
 
         D_result = D(x_, y_fill_).squeeze()
         D_real_loss = BCE_loss(D_result, y_real_)
@@ -235,7 +249,10 @@ for epoch in range(train_epoch):
         y_ = (torch.rand(mini_batch, 1) * 10).type(torch.LongTensor).squeeze()
         y_label_ = onehot[y_]
         y_fill_ = fill[y_]
-        z_, y_label_, y_fill_ = Variable(z_.cuda()), Variable(y_label_.cuda()), Variable(y_fill_.cuda())
+        if torch.cuda.is_available():
+            z_, y_label_, y_fill_ = Variable(z_.cuda()), Variable(y_label_.cuda()), Variable(y_fill_.cuda())
+        else:
+            z_, y_label_, y_fill_ = Variable(z_), Variable(y_label_), Variable(y_fill_)
 
         G_result = G(z_, y_label_)
         D_result = D(G_result, y_fill_).squeeze()
@@ -257,7 +274,11 @@ for epoch in range(train_epoch):
         y_ = (torch.rand(mini_batch, 1) * 10).type(torch.LongTensor).squeeze()
         y_label_ = onehot[y_]
         y_fill_ = fill[y_]
-        z_, y_label_, y_fill_ = Variable(z_.cuda()), Variable(y_label_.cuda()), Variable(y_fill_.cuda())
+        with torch.no_grad():
+            if torch.cuda.is_available():
+                z_, y_label_, y_fill_ = Variable(z_.cuda()), Variable(y_label_.cuda()), Variable(y_fill_.cuda())
+            else:
+                z_, y_label_, y_fill_ = Variable(z_), Variable(y_label_), Variable(y_fill_)
 
         G_result = G(z_, y_label_)
         D_result = D(G_result, y_fill_).squeeze()
